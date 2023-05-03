@@ -1,0 +1,23 @@
+[
+    {
+        "model": "rareapi.tag",
+        "pk": 1,
+        "fields": {
+            "label": "Cute babies"
+        }
+    },
+    {
+        "model": "rareapi.reaction",
+        "pk": 2,
+        "fields": {
+            "label": "Boring things"
+        }
+    },
+    {
+        "model": "rareapi.reaction",
+        "pk": 3,
+        "fields": {
+            "label": "Superheroes"
+        }
+    }
+]

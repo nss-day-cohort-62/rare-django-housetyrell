@@ -1,0 +1,26 @@
+[
+    {
+        "model": "rareapi.reaction",
+        "pk": 1,
+        "fields": {
+            "label": "Wow!",
+            "image_url": "https://media.tenor.com/images/4fe01cc7ca603ad149f209b386d35efb/tenor.gif"
+        }
+    },
+    {
+        "model": "rareapi.reaction",
+        "pk": 2,
+        "fields": {
+            "label": "Boo!",
+            "image_url": "https://media.giphy.com/media/3og0ITIaKtQTxRCa4w/giphy.gif"
+        }
+    },
+    {
+        "model": "rareapi.reaction",
+        "pk": 3,
+        "fields": {
+            "label": "Meh...",
+            "image_url": "https://i.pinimg.com/originals/55/26/23/552623ecea32b36e60057981a8962752.gif"
+        }
+    }
+]

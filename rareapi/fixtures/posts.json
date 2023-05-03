@@ -1,0 +1,28 @@
+[
+    {
+        "model": "rareapi.post",
+        "pk": 1,
+        "fields": {
+            "user": 1,
+            "category": 1,
+            "title": "This is my first post!",
+            "publication_date": "2023-12-12",
+            "image_url": "https://www.petfinder.com/cat/baby-59623997/tn/nashville/nashville-cat-rescue-tn369/",
+            "content": "I am good kitty",
+            "approved": true
+        }
+    },
+    {
+        "model": "rareapi.post",
+        "pk": 2,
+        "fields": {
+            "user": 1,
+            "category": 2,
+            "title": "This is my second post!",
+            "publication_date": "2023-12-23",
+            "image_url": "https://www.petfinder.com/dog/harriet-63850621/tn/nashville/wags-and-walks-ca1977/",
+            "content": "I'm good girl",
+            "approved": true
+        }
+    }
+]
