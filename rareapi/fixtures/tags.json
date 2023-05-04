@@ -7,14 +7,14 @@
         }
     },
     {
-        "model": "rareapi.reaction",
+        "model": "rareapi.tag",
         "pk": 2,
         "fields": {
             "label": "Boring things"
         }
     },
     {
-        "model": "rareapi.reaction",
+        "model": "rareapi.tag",
         "pk": 3,
         "fields": {
             "label": "Superheroes"
