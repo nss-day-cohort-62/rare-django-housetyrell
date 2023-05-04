@@ -31,6 +31,17 @@ class PostView(ViewSet):
        
         """
         posts = Post.objects.all()
+        category_id = request.query_params.get('category', None)
+        author_id = request.query_params.get('author', None)
+         
+
+        if category_id is not None:
+            category = Category.objects.get(pk=category_id)
+            posts = posts.filter(category=category)
+        if author_id is not None:
+                author = RareUser.objects.get(pk=author_id)
+                posts = posts.filter(user=author)
+
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data)
     def create(self, request):
@@ -72,19 +83,30 @@ class PostView(ViewSet):
 class CreatePostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
-        fields = ['id', 'user', 'category', 'title', 'publication_date', 'image_url' 'content','approved']
+        fields = ('id', 'user', 'category', 'title', 'publication_date', 'image_url', 'content','approved')
 
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ('id', 'post', 'author', 'content','created_on')
 
+class RareUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RareUser
+        fields = ('id','full_name')
+class PostCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Category
+        fields=( 'id','label')
 
 class PostSerializer(serializers.ModelSerializer):
     """JSON serializer for posts
     """
     comments=CommentSerializer(many=True)
+    user= RareUserSerializer(many=False)
+    category = PostCategorySerializer(many=False)
     class Meta:
         model = Post
-        fields = ['id', 'user', 'category', 'title', 'publication_date', 'image_url', 'content','approved', 'comments']
-
+        fields = ('id', 'user', 'category', 'title', 'publication_date', 'image_url', 'content','approved', 'comments')
+        
+        
