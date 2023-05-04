@@ -3,8 +3,8 @@
         "model": "rareapi.comment",
         "pk": 1,
         "fields": {
-           "post_id": 1,
-           "author_id": 1,
+           "post": 1,
+           "author": 1,
            "content": "I love this cat!",
            "created_on": "2023-05-03"
         }
@@ -13,8 +13,8 @@
         "model": "rareapi.comment",
         "pk": 2,
         "fields": {
-           "post_id": 1,
-           "author_id": 1,
+           "post": 1,
+           "author": 1,
            "content": "I also love this cat!",
            "created_on": "2023-05-04"
         }
