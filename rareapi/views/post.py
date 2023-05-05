@@ -1,7 +1,7 @@
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers, status
-from rareapi.models import Post, Category, RareUser, Comment
+from rareapi.models import Post, Category, RareUser, Comment, Subscription
 from django.core.exceptions import ValidationError
 
 
@@ -33,15 +33,20 @@ class PostView(ViewSet):
         posts = Post.objects.all()
         category_id = request.query_params.get('category', None)
         author_id = request.query_params.get('author', None)
-         
-
+        subscribedPosts = request.query_params.get('subscribedPosts', None)
+        filteredPosts = []
         if category_id is not None:
             category = Category.objects.get(pk=category_id)
             posts = posts.filter(category=category)
         if author_id is not None:
-                author = RareUser.objects.get(pk=author_id)
-                posts = posts.filter(user=author)
-
+            author = RareUser.objects.get(pk=author_id)
+            posts = posts.filter(user=author)
+        if subscribedPosts is not None:
+            current_user = RareUser.objects.get(user=request.auth.user)
+            for subscribed in current_user.subscribedTo:
+                followedPosts = posts.filter(user=subscribed)
+                filteredPosts.append(followedPosts)
+            posts = filteredPosts
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data)
     def create(self, request):
@@ -98,12 +103,12 @@ class PostCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model=Category
         fields=( 'id','label')
-
 class PostSerializer(serializers.ModelSerializer):
     """JSON serializer for posts
     """
     comments=CommentSerializer(many=True)
     user= RareUserSerializer(many=False)
+
     category = PostCategorySerializer(many=False)
     class Meta:
         model = Post
