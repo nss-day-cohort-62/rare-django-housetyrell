@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework import serializers, status
 from rareapi.models import RareUser, Subscription
 from rest_framework.decorators import action
+from django.db.models import Q, Count
 
 
 class RareUserView(ViewSet):
@@ -15,9 +16,12 @@ class RareUserView(ViewSet):
         Returns:
             Response -- JSON serialized user
         """
-
-        rareuser = RareUser.objects.get(pk=pk)
-        rareuser.subscriptions = Subscription.objects.all(author=pk)
+        rareuser = RareUser.objects.annotate(
+            subscribed = Count(
+                "subscribers",
+                filter=Q(subscribers=pk)
+            )
+        ).get(pk=pk)
         serializer = RareUserSerializer(rareuser)
         return Response(serializer.data)
 
@@ -28,10 +32,7 @@ class RareUserView(ViewSet):
         Returns:
             Response -- JSON serialized list of users
         """
-
         rareusers = RareUser.objects.all()
-        for rareuser in rareusers:
-            rareuser.subscriptions = Subscription.objects.all(author=pk)
         serializer = RareUserSerializer(rareusers, many=True)
         return Response(serializer.data)
 
@@ -59,4 +60,4 @@ class RareUserSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = RareUser
-        fields = ('id', 'user', 'bio', 'full_name', 'subscriptions', 'subscribed')
+        fields = ('id', 'user', 'bio', 'full_name', 'subscribedTo', 'subscribed')
