@@ -5,7 +5,6 @@ from rareapi.models import Post, Category, RareUser, Comment, Subscription
 from django.core.exceptions import ValidationError
 
 
-
 class PostView(ViewSet):
     """Level up game types view"""
   
@@ -43,9 +42,14 @@ class PostView(ViewSet):
             posts = posts.filter(user=author)
         if subscribedPosts is not None:
             current_user = RareUser.objects.get(user=request.auth.user)
-            for subscribed in current_user.subscribedTo:
-                followedPosts = posts.filter(user=subscribed)
-                filteredPosts.append(followedPosts)
+            subscriptions = Subscription.objects.filter(follower_id=current_user)
+            # print(subscriptions)
+            for subscription in subscriptions:
+                author = RareUser.objects.get(user=subscription.author.id)
+                followedPosts = posts.filter(user=author.id)
+                for post in followedPosts:
+                    post = Post.objects.get(pk=post.id)
+                    filteredPosts.append(post)
             posts = filteredPosts
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data)

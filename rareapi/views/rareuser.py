@@ -5,7 +5,7 @@ from rest_framework import serializers, status
 from rareapi.models import RareUser, Subscription
 from rest_framework.decorators import action
 from django.db.models import Q, Count
-
+import datetime
 
 class RareUserView(ViewSet):
     """Level up users view"""
@@ -16,12 +16,17 @@ class RareUserView(ViewSet):
         Returns:
             Response -- JSON serialized user
         """
-        rareuser = RareUser.objects.annotate(
-            subscribed = Count(
-                "subscribers",
-                filter=Q(subscribers=pk)
-            )
-        ).get(pk=pk)
+        try:
+            subscription = Subscription.objects.get(follower_id=request.auth.user.id, author_id=pk)
+            rareuser = RareUser.objects.annotate(
+                subscribed = Count(
+                    "subscribers",
+                    filter=Q(subscribers=subscription.author.id)
+                )
+            ).get(pk=pk)
+        except Subscription.DoesNotExist:
+            rareuser = RareUser.objects.get(pk=pk)
+            rareuser.subscribed = 0
         serializer = RareUserSerializer(rareuser)
         return Response(serializer.data)
 
@@ -45,13 +50,13 @@ class RareUserView(ViewSet):
     @action(methods=['post'], detail=True)       
     def subscribe(self, request, pk):
         author = RareUser.objects.get(pk=pk)
-        subscriber = request.auth.user
+        subscriber = RareUser.objects.get(pk=request.auth.user.id)
         created_on = request.data['created_on']
         subscription = Subscription.objects.create(author=author, follower= subscriber, created_on=created_on)
         return Response({'message': 'Subscribed to User'}, status=status.HTTP_201_CREATED)  
     @action(methods=['delete'], detail=True)
     def unsubscribe(self, request, pk):
-        subscription = Subscription.objects.get(author=pk, follower=request.auth.user)
+        subscription = Subscription.objects.get(author=pk, follower=request.auth.user.id)
         subscription.delete()
         return Response({'message': 'Unsubscribed'}, status=status.HTTP_204_NO_CONTENT)
 
@@ -60,4 +65,6 @@ class RareUserSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = RareUser
-        fields = ('id', 'user', 'bio', 'full_name', 'subscribedTo', 'subscribed')
+        fields = ('id', 'user', 'bio', 'full_name', 'subscribedTo', 'subscribed', 'subscribers')
+        depth = 1
+
