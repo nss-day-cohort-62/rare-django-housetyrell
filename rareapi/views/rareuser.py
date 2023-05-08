@@ -21,7 +21,7 @@ class RareUserView(ViewSet):
             rareuser = RareUser.objects.annotate(
                 subscribed = Count(
                     "subscribers",
-                    filter=Q(subscribers=subscription.author.id)
+                    filter=Q(subscribers=subscription)
                 )
             ).get(pk=pk)
         except Subscription.DoesNotExist:
