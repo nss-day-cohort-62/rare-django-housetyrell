@@ -11,5 +11,4 @@ class Post(models.Model):
     image_url = models.CharField(max_length=155)
     content = models.CharField(max_length=155)
     approved= models.BooleanField()
-
-   
+    tags = models.ManyToManyField("Tag", through="PostTag")
